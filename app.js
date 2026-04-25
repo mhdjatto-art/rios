@@ -313,6 +313,12 @@ function renderSidebar(s) {
 
 // ---------------------------------------------------------------------
 async function routeTo(main, authState) {
+  // master_admin belongs in /master panel — redirect immediately
+  if (authState.role === 'master_admin') {
+    window.location.href = '/master';
+    return;
+  }
+
   const path = (location.hash || '#' + DEFAULT_ROUTE).slice(1);
   const view = VIEWS[path];
   if (!view) { location.hash = '#' + DEFAULT_ROUTE; return; }

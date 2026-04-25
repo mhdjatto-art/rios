@@ -12,7 +12,19 @@ function getSnapshot() {
     isAdmin: state.profile?.role === 'admin',
     isManagerOrAdmin: state.profile?.role === 'admin' || state.profile?.role === 'manager',
     isViewer: state.profile?.role === 'viewer',
+    isMasterAdmin: state.profile?.role === 'master_admin',
   };
+}
+
+// Redirect master_admin to /master panel automatically
+function redirectIfMasterAdmin() {
+  if (state.profile?.role === 'master_admin') {
+    const isMasterPage = window.location.pathname.startsWith('/master') ||
+                         window.location.pathname.endsWith('master.html');
+    if (!isMasterPage) {
+      window.location.href = '/master';
+    }
+  }
 }
 
 function refreshPerms() {
@@ -36,13 +48,15 @@ export const auth = {
     await loadProfile();
     state.ready = true;
     emit();
-    authApi.onChange(async (s) => { state.session = s || null; await loadProfile(); emit(); });
+    redirectIfMasterAdmin();
+    authApi.onChange(async (s) => { state.session = s || null; await loadProfile(); redirectIfMasterAdmin(); emit(); });
   },
   async signIn(email, password) {
     const { data, error } = await authApi.signIn(email, password);
     if (error) return { error };
     state.session = data.session;
     await loadProfile();
+    redirectIfMasterAdmin();
     emit();
     return { error: null };
   },
