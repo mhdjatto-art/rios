@@ -2,23 +2,23 @@
 import { supabase } from './api.js';
 
 export const DEFAULT_THEME = {
-  mode: 'light',
-  primary: '#007aff',
-  accent: '#34c759',
-  danger: '#ff3b30',
-  warning: '#ff9500',
-  info: '#5ac8fa',
-  bg: '#f2f2f7',
-  surface: '#ffffff',
-  surface2: '#f8f9fb',
-  text: '#1d1d1f',
-  muted: '#8e8e93',
-  border: '#d2d2d7',
-  font: 'sf',
-  radius: 10,
+  mode: 'dark',
+  primary: '#60a5fa',
+  accent:  '#34d399',
+  danger:  '#f87171',
+  warning: '#fbbf24',
+  info:    '#67e8f9',
+  bg:      '#0f172a',
+  surface: '#1e293b',
+  surface2:'#334155',
+  text:    '#f1f5f9',
+  muted:   '#94a3b8',
+  border:  '#475569',
+  font:    'inter',
+  radius:  8,
   density: 'comfortable',
-  shadow: 'soft',
-  glass: false,
+  shadow:  'subtle',
+  glass:   false,
 };
 
 export const PRESETS = {
@@ -294,5 +294,6 @@ export function cachedPrefs() {
 }
 
 export function themeFromPrefs(prefs) {
+  // If user has no saved theme, fall back to dark DEFAULT_THEME
   return { ...DEFAULT_THEME, ...(prefs?.theme || {}) };
 }

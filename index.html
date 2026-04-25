@@ -16,6 +16,22 @@
   <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%233b82f6'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><rect width='180' height='180' fill='url(%23g)' rx='36'/><text x='90' y='124' font-size='110' text-anchor='middle' fill='white' font-family='system-ui' font-weight='800'>R</text></svg>">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <script>
+    // Anti-FOUC: apply dark theme immediately before any render
+    (function() {
+      try {
+        var prefs = JSON.parse(localStorage.getItem('rios.prefs') || '{}');
+        var mode = prefs?.theme?.mode || 'dark'; // default to dark
+        document.documentElement.dataset.theme = mode;
+        if (mode === 'dark') document.documentElement.classList.add('dark');
+        // Apply saved colors if available
+        if (prefs?.theme?.bg) document.documentElement.style.setProperty('--rios-bg', prefs.theme.bg);
+        if (prefs?.theme?.surface) document.documentElement.style.setProperty('--rios-surface', prefs.theme.surface);
+        if (prefs?.theme?.text) document.documentElement.style.setProperty('--rios-text', prefs.theme.text);
+      } catch(e) {
+        document.documentElement.dataset.theme = 'dark';
+        document.documentElement.classList.add('dark');
+      }
+    })();
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('service-worker.js').catch((e) => console.warn('SW:', e));

@@ -110,6 +110,10 @@ let mobileOpen = false;
       await loadBranches();
       await cacheCompanySettings();
       userPrefs = await loadPreferences();
+      // If user has no saved theme in DB, clear old localStorage and apply dark default
+      if (!userPrefs?.theme) {
+        try { localStorage.removeItem('rios.prefs'); } catch {}
+      }
       applyTheme(themeFromPrefs(userPrefs));
     }
     renderShell(s);
