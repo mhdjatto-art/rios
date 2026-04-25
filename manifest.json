@@ -1,0 +1,26 @@
+{
+  "name": "RIOS — Retail ERP",
+  "short_name": "RIOS",
+  "description": "Retail Intelligence & Operations System",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#2453b8",
+  "background_color": "#0f172a",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%232453b8' rx='32'/><text x='96' y='130' font-size='120' text-anchor='middle' fill='white' font-family='system-ui' font-weight='bold'>R</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%232453b8' rx='80'/><text x='256' y='350' font-size='320' text-anchor='middle' fill='white' font-family='system-ui' font-weight='bold'>R</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Master Admin - RIOS</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body.master-app { font-family: 'Cairo', -apple-system, Segoe UI, Tahoma, sans-serif; background:#0b1020 !important; color:#e6e9f5 !important; min-height:100vh; }
+  .master-app .topbar { display:flex; justify-content:space-between; align-items:center; padding:14px 22px; background:#111735; border-bottom:1px solid #2a3160; color:#e6e9f5; }
+  .master-app .topbar h1 { font-size:18px; margin:0; color:#7cc3ff; }
+  .master-app .topbar .who { font-size:13px; opacity:.85; color:#e6e9f5; }
+  .master-app .topbar .who a { color:#ff8a8a; text-decoration:none; }
+  .master-app .layout { display:grid; grid-template-columns:230px 1fr; min-height:calc(100vh - 56px); }
+  .master-app .sidebar { background:#0f1530; border-left:1px solid #2a3160; padding:14px 0; }
+  .master-app .sidebar a { display:block; padding:11px 18px; color:#cbd2ee; text-decoration:none; border-right:3px solid transparent; cursor:pointer; }
+  .master-app .sidebar a:hover, .master-app .sidebar a.active { background:#1a2150; border-right-color:#4ea1ff; color:#fff; }
+  .master-app .main { padding:22px; background:#0b1020; }
+  .master-app .card { background:#111735; border:1px solid #2a3160; border-radius:10px; padding:16px; margin-bottom:16px; color:#e6e9f5; }
+  .master-app .card h2 { color:#e6e9f5; }
+  .master-app .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+  .master-app .stat { background:#152055; border-radius:10px; padding:14px; }
+  .master-app .stat .v { font-size:24px; font-weight:700; color:#7cc3ff; }
+  .master-app .stat .l { font-size:12px; opacity:.85; color:#cbd2ee; }
+  .master-app table { width:100%; border-collapse:collapse; color:#e6e9f5; }
+  .master-app th, .master-app td { padding:10px; text-align:right; border-bottom:1px solid #2a3160; font-size:13px; }
+  .master-app th { background:#1a2150; color:#a8b3e6; }
+  .master-app .btn { padding:7px 13px; border-radius:8px; border:none; cursor:pointer; font-size:13px; margin:0 2px; font-family:inherit; }
+  .master-app .btn-primary { background:#3a78ff; color:#fff; }
+  .master-app .btn-warn { background:#e0a800; color:#111; }
+  .master-app .btn-danger { background:#d9534f; color:#fff; }
+  .master-app .btn-ok { background:#28a745; color:#fff; }
+  .master-app .btn-sec { background:#444a78; color:#fff; }
+  .master-app input, .master-app select { background:#0f1530 !important; border:1px solid #2a3160 !important; color:#e6e9f5 !important; padding:8px 10px; border-radius:8px; width:100%; font-family:inherit; }
+  .master-app label { display:block; font-size:13px; margin:8px 0 4px; opacity:.9; color:#cbd2ee; }
+  .master-app .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .master-app .badge { padding:3px 8px; border-radius:99px; font-size:11px; }
+  .master-app .b-active { background:#143d1f; color:#7ee08a; }
+  .master-app .b-suspended { background:#3d1414; color:#ff8a8a; }
+  .master-app .b-trial { background:#3d3514; color:#ffd87a; }
+  .master-app .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:9999; }
+  .master-app .modal-bg.show { display:flex; }
+  .master-app .modal { background:#111735; border:1px solid #2a3160; border-radius:12px; padding:20px; width:480px; max-width:92%; color:#e6e9f5; }
+  .master-app .modal h3 { margin-top:0; color:#7cc3ff; }
+  .master-app .toast { position:fixed; bottom:20px; left:20px; background:#1a2150; border:1px solid #2a3160; padding:12px 18px; border-radius:10px; display:none; z-index:9999; color:#e6e9f5; }
+  .master-app .toast.show { display:block; }
+  .master-app .section { display:none; }
+  .master-app .section.active { display:block; }
+  .master-app .muted { opacity:.7; font-size:12px; }
+  .master-app a { color:inherit; }
+</style>
+</head>
+<body class="master-app">
+<div class="topbar">
+  <h1>🛡️ Master Admin Console</h1>
+  <div class="who"><span id="meEmail">...</span> &nbsp;|&nbsp; <a href="#" id="logoutBtn">خروج</a></div>
+</div>
+<div class="layout">
+  <nav class="sidebar">
+    <a data-sec="dashboard" class="active">📊 لوحة المعلومات</a>
+    <a data-sec="companies">🏢 الشركات</a>
+    <a data-sec="create">➕ إنشاء شركة</a>
+    <a data-sec="audit">📜 سجل التدقيق</a>
+  </nav>
+  <main class="main">
+    <section id="sec-dashboard" class="section active">
+      <div class="card">
+        <h2 style="margin-top:0;">نظرة عامة</h2>
+        <div class="stats" id="statsBox">
+          <div class="stat"><div class="v">-</div><div class="l">جاري التحميل...</div></div>
+        </div>
+      </div>
+    </section>
+    <section id="sec-companies" class="section">
+      <div class="card">
+        <h2 style="margin-top:0;">قائمة الشركات</h2>
+        <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+          <input id="searchCo" placeholder="بحث بالاسم أو البريد..." style="max-width:340px;" />
+          <select id="filterStatus" style="max-width:180px;">
+            <option value="">كل الحالات</option>
+            <option value="active">نشط</option>
+            <option value="suspended">معلّق</option>
+            <option value="trial">تجريبي</option>
+          </select>
+          <button class="btn btn-sec" onclick="loadCompanies()">تحديث</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="coTable">
+            <thead><tr>
+              <th>الاسم</th><th>المالك</th><th>الحالة</th><th>الخطة</th><th>المستخدمون</th><th>الفروع</th><th>أنشئت</th><th>إجراءات</th>
+            </tr></thead>
+            <tbody><tr><td colspan="8" class="muted">جاري التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <section id="sec-create" class="section">
+      <div class="card">
+        <h2 style="margin-top:0;">إنشاء شركة جديدة</h2>
+        <p class="muted">يجب إنشاء حساب المالك في Supabase Auth أولاً، ثم إدخال user_id الخاص به هنا.</p>
+        <div class="row">
+          <div><label>اسم الشركة *</label><input id="cName" /></div>
+          <div><label>البريد الإلكتروني للتواصل</label><input id="cEmail" type="email" /></div>
+        </div>
+        <div class="row">
+          <div><label>رقم الهاتف</label><input id="cPhone" /></div>
+          <div><label>الخطة</label>
+            <select id="cPlan">
+              <option value="trial">تجريبي</option>
+              <option value="basic">أساسي</option>
+              <option value="pro">احترافي</option>
+              <option value="enterprise">مؤسسي</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div><label>الحد الأقصى للمستخدمين</label><input id="cMaxUsers" type="number" value="5" /></div>
+          <div><label>الحد الأقصى للفروع</label><input id="cMaxBranches" type="number" value="1" /></div>
+        </div>
+        <label>UUID المالك (من Supabase Auth) *</label>
+        <input id="cOwnerId" placeholder="00000000-0000-0000-0000-000000000000" />
+        <label>اسم المالك</label>
+        <input id="cOwnerName" />
+        <div style="margin-top:14px;">
+          <button class="btn btn-primary" onclick="createCompany()">إنشاء الشركة</button>
+        </div>
+      </div>
+    </section>
+    <section id="sec-audit" class="section">
+      <div class="card">
+        <h2 style="margin-top:0;">سجل تدقيق المسؤول الرئيسي</h2>
+        <div style="overflow-x:auto;">
+          <table id="auditTable">
+            <thead><tr><th>التاريخ</th><th>المنفّذ</th><th>الإجراء</th><th>الكيان</th><th>التفاصيل</th></tr></thead>
+            <tbody><tr><td colspan="5" class="muted">جاري التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="modal-bg" id="editModal">
+  <div class="modal">
+    <h3>تعديل اشتراك الشركة</h3>
+    <input type="hidden" id="eId" />
+    <label>الخطة</label>
+    <select id="ePlan">
+      <option value="trial">تجريبي</option>
+      <option value="basic">أساسي</option>
+      <option value="pro">احترافي</option>
+      <option value="enterprise">مؤسسي</option>
+    </select>
+    <div class="row">
+      <div><label>الحد الأقصى للمستخدمين</label><input id="eMaxUsers" type="number" /></div>
+      <div><label>الحد الأقصى للفروع</label><input id="eMaxBranches" type="number" /></div>
+    </div>
+    <label>تاريخ انتهاء الاشتراك (اختياري)</label>
+    <input id="eExpires" type="date" />
+    <div style="margin-top:14px; text-align:left;">
+      <button class="btn btn-sec" onclick="closeModal('editModal')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveSubscription()">حفظ</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="env.js"></script>
+<script src="master.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+/* ============================================================
+   RIOS Electric Glass Theme — v4
+   Glassmorphism + electric blue + neon accents
+   Light & dark modes with smooth transitions
+   ============================================================ */
+
+:root {
+  /* Light mode */
+  --rios-bg: #f6f9ff;
+  --rios-bg-grad: radial-gradient(1200px 600px at 0% 0%, rgba(59,130,246,.10), transparent 60%),
+                  radial-gradient(900px 500px at 100% 0%, rgba(34,211,238,.10), transparent 60%),
+                  linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+  --rios-fg: #0f172a;
+  --rios-fg-muted: #475569;
+  --rios-primary: #3b82f6;
+  --rios-primary-2: #2563eb;
+  --rios-accent: #22d3ee;
+  --rios-success: #10b981;
+  --rios-warn: #f59e0b;
+  --rios-danger: #ef4444;
+  --rios-card: rgba(255,255,255,.85);
+  --rios-card-2: #ffffff;
+  --rios-border: rgba(15,23,42,.08);
+  --rios-border-strong: rgba(15,23,42,.14);
+
+  font-family: 'Cairo', 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+[data-theme="dark"], :root.dark {
+  --rios-bg: #0a0f1f;
+  --rios-bg-grad: radial-gradient(1200px 600px at 0% 0%, rgba(59,130,246,.18), transparent 60%),
+                  radial-gradient(900px 500px at 100% 0%, rgba(34,211,238,.14), transparent 60%),
+                  linear-gradient(180deg, #0a0f1f 0%, #0b1226 100%);
+  --rios-fg: #e2e8f0;
+  --rios-fg-muted: #94a3b8;
+  --rios-primary: #60a5fa;
+  --rios-primary-2: #3b82f6;
+  --rios-accent: #67e8f9;
+  --rios-card: rgba(17, 25, 40, .55);
+  --rios-card-2: rgba(17, 25, 40, .85);
+  --rios-border: rgba(148,163,184,.14);
+  --rios-border-strong: rgba(148,163,184,.22);
+}
+
+html, body {
+  background: var(--rios-bg) !important;
+  background-image: var(--rios-bg-grad) !important;
+  background-attachment: fixed !important;
+  color: var(--rios-fg) !important;
+  min-height: 100vh;
+  font-feature-settings: 'cv11' 1, 'ss01' 1;
+}
+
+/* Theme toggle button */
+.rios-theme-toggle {
+  position: fixed;
+  top: 12px;
+  inset-inline-end: 12px;
+  z-index: 9999;
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  border: 1px solid var(--rios-border);
+  background: var(--rios-card-2);
+  backdrop-filter: blur(14px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px -10px rgba(15,23,42,.2);
+  transition: all .2s ease;
+}
+.rios-theme-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(59,130,246,.4);
+  border-color: rgba(59,130,246,.4);
+}
+.rios-theme-toggle svg {
+  width: 20px; height: 20px;
+  color: var(--rios-primary);
+}

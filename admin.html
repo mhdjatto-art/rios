@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RIOS Admin</title>
+</head>
+<body>
+  <h1>Super Admin Panel</h1>
+
+  <button onclick="checkAdmin()">Check Access</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      "https://YOUR_PROJECT.supabase.co",
+      "YOUR_ANON_KEY"
+    );
+
+    async function checkAdmin() {
+      const { data, error } = await supabase.rpc("is_platform_admin");
+
+      if (error) {
+        alert("Error: " + error.message);
+        return;
+      }
+
+      if (data) {
+        alert("You are SUPER ADMIN");
+      } else {
+        alert("You are NOT admin");
+      }
+    }
+  </script>
+</body>
+</html>
