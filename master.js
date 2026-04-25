@@ -4,7 +4,8 @@
   const SUPABASE_URL = ENV.SUPABASE_URL || window.SUPABASE_URL;
   const SUPABASE_ANON_KEY = ENV.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY;
   const LOGIN_URL = '/';
-  const STORAGE_KEYS = ['rios.auth', 'sb-dschyoxkcazxvzppbvxm-auth-token', 'supabase.auth.token'];
+  const STORAGE_KEY  = 'sb-dschyoxkcazxvzppbvxm-auth-token';   // Supabase default key
+  const STORAGE_KEYS = [STORAGE_KEY, 'rios.auth', 'supabase.auth.token']; // all possible keys
 
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     document.addEventListener('DOMContentLoaded', () => {
