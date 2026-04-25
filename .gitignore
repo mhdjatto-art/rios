@@ -2,8 +2,12 @@
 # RIOS — .gitignore
 # ====================================================
 
-# Environment config — NEVER commit real keys to Git
-env.js
+# Environment config
+# NOTE: env.js contains only the PUBLIC anon key (safe to commit).
+# NEVER commit the service_role key here.
+# env.js is tracked in Git for Vercel deployment.
+# env.secret.js  ← put service_role key here and keep THIS gitignored
+env.secret.js
 
 # OS artifacts
 .DS_Store
