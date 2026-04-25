@@ -4,7 +4,7 @@
   const SUPABASE_URL = ENV.SUPABASE_URL || window.SUPABASE_URL;
   const SUPABASE_ANON_KEY = ENV.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY;
   const LOGIN_URL = '/';
-  const STORAGE_KEY = 'rios.auth';
+  const STORAGE_KEYS = ['rios.auth', 'sb-dschyoxkcazxvzppbvxm-auth-token', 'supabase.auth.token'];
 
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     document.addEventListener('DOMContentLoaded', () => {
@@ -45,11 +45,14 @@
 
   function readStoredSession() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (parsed && parsed.access_token && parsed.user) return parsed;
-      if (parsed && parsed.currentSession && parsed.currentSession.access_token) return parsed.currentSession;
+      // Try all known storage keys
+      for (const key of STORAGE_KEYS) {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.access_token && parsed.user) return parsed;
+        if (parsed && parsed.currentSession && parsed.currentSession.access_token) return parsed.currentSession;
+      }
     } catch (e) {}
     return null;
   }
@@ -260,9 +263,23 @@
     const logout = document.getElementById('logoutBtn');
     if (logout) logout.addEventListener('click', async function(e){
       e.preventDefault();
-      try { await sb.auth.signOut(); } catch (err) {}
-      try { localStorage.removeItem(STORAGE_KEY); } catch (err) {}
-      window.location.href = LOGIN_URL;
+      e.stopPropagation();
+      logout.textContent = '...';
+      logout.style.pointerEvents = 'none';
+      try { await sb.auth.signOut({ scope: 'local' }); } catch (err) { console.warn('signOut:', err); }
+      // Clear ALL possible session storage keys
+      STORAGE_KEYS.forEach(function(k) {
+        try { localStorage.removeItem(k); } catch (_) {}
+        try { sessionStorage.removeItem(k); } catch (_) {}
+      });
+      // Clear all sb-* keys from localStorage
+      Object.keys(localStorage).forEach(function(k) {
+        if (k.startsWith('sb-') || k.startsWith('supabase') || k.startsWith('rios')) {
+          try { localStorage.removeItem(k); } catch (_) {}
+        }
+      });
+      // Use replace so back button won't return to master panel
+      window.location.replace(LOGIN_URL);
     });
     const sc = document.getElementById('searchCo');
     if (sc) sc.addEventListener('input', renderCompanies);

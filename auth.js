@@ -60,5 +60,16 @@ export const auth = {
     emit();
     return { error: null };
   },
-  async signOut() { await authApi.signOut(); state.session = null; state.profile = null; emit(); },
+  async signOut() {
+    await authApi.signOut();
+    // Clear all Supabase/RIOS session keys
+    Object.keys(localStorage).forEach((k) => {
+      if (k.startsWith('sb-') || k.startsWith('supabase') || k.startsWith('rios')) {
+        try { localStorage.removeItem(k); } catch (_) {}
+      }
+    });
+    state.session = null;
+    state.profile = null;
+    emit();
+  },
 };
