@@ -83,10 +83,13 @@ export async function render(host) {
       URL.revokeObjectURL(url);
 
       if (skippedTables.length > 0) {
-        status.textContent = t('backup_done') + ' (' + skippedTables.length + ' skipped)';
+        const skippedList = skippedTables.map((s) => s.table).join(', ');
+        status.textContent = t('backup_done') + ' (' + skippedTables.length + ' skipped: ' + skippedList + ')';
+        // Use 'error' tone to draw attention; backup is incomplete.
+        // If your toast() supports 'warning' you can swap it back.
         toast(
           t('backup_done') + ' — ' + skippedTables.length + ' table(s) skipped. See skipped_tables.json inside the zip.',
-          'warning'
+          'error'
         );
       } else {
         status.textContent = t('backup_done');
@@ -108,4 +111,12 @@ function toCSV(rows) {
   const cols = Object.keys(rows[0]);
   const esc = (v) => {
     if (v == null) return '';
-    if (typeof v ===
+    if (typeof v === 'object') v = JSON.stringify(v);
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  return [
+    cols.join(','),
+    ...rows.map((r) => cols.map((c) => esc(r[c])).join(',')),
+  ].join('\n');
+}
