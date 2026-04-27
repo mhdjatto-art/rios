@@ -1,13 +1,14 @@
-// frontend/scanner.js  (Phase 6)
+// frontend/scanner.js (Phase 6)
 // ---------------------------------------------------------------------
 // Two ways to scan:
-// 1. USB scanner: just focuses an input field. Device types like a keyboard;
-//    scanner ends with Enter → triggers onDetected(code).
-// 2. Camera: uses html5-qrcode from CDN, renders a video preview.
+//   1. USB scanner: just focuses an input field. Device types like a keyboard;
+//      scanner ends with Enter → triggers onDetected(code).
+//   2. Camera: uses html5-qrcode from CDN, renders a video preview.
 // ---------------------------------------------------------------------
 
 import { t } from './i18n.js';
 import { el, toast } from './utils.js';
+import { logError, logWarning } from './logger.js';
 
 // USB-as-keyboard input: any <input> whose value is submitted via Enter.
 export function attachUSBScanner(input, onDetected) {
@@ -40,13 +41,19 @@ export async function openCameraScanner(onDetected) {
 
   stopBtn.addEventListener('click', () => close());
   dlg.addEventListener('close', () => {
-    try { scanner?.stop?.().catch(() => {}); scanner?.clear?.(); } catch {}
+    try {
+      scanner?.stop?.().catch((e) => logWarning('Scanner stop failed', { source: 'scanner.dialog.close.stop', message: e?.message }));
+      scanner?.clear?.();
+    } catch (e) {
+      logWarning('Scanner cleanup failed', { source: 'scanner.dialog.close.cleanup', message: e?.message });
+    }
     dlg.remove();
   });
   dlg.showModal();
 
   async function close() {
-    try { await scanner?.stop?.(); } catch {}
+    try { await scanner?.stop?.(); }
+    catch (e) { logWarning('Scanner stop failed on close', { source: 'scanner.close', message: e?.message }); }
     dlg.close();
   }
 
@@ -67,10 +74,10 @@ export async function openCameraScanner(onDetected) {
           toast('✓ ' + code.slice(0, 20), 'success');
         }
       },
-      () => {}, // onError per-frame (ignore)
+      () => {} // onError per-frame (ignore)
     );
   } catch (err) {
-    // Handle camera access error gracefully
+    logError(err, { source: 'scanner.openCameraScanner' });
     status.textContent = t('camera_error') + ': ' + (err?.message || err);
     status.className = 'form-error';
   }
