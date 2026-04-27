@@ -11,11 +11,15 @@ function normalizeError(err) {
   const code = err.code || err.status || 'ERR';
   const raw = err.message || String(err);
   let userMessage = raw;
+  
+  // Map common error codes to user-friendly messages
   if (/INSUFFICIENT_STOCK/.test(raw)) userMessage = 'INSUFFICIENT_STOCK';
   else if (/FORBIDDEN/.test(raw) || code === '42501') userMessage = 'FORBIDDEN';
   else if (/AUTH_REQUIRED/.test(raw) || code === '28000') userMessage = 'AUTH_REQUIRED';
   else if (/VALIDATION:/.test(raw)) userMessage = raw.replace(/.*VALIDATION:\s*/, '');
   else if (code === '23505') userMessage = 'A record with that unique value already exists.';
+  else if (code === '23503') userMessage = 'Cannot delete: this record is referenced by other data';
+  
   return { code, raw, message: userMessage };
 }
 const ok = (d) => ({ data: d, error: null });

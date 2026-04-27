@@ -23,7 +23,7 @@
 
   function toast(msg, type) {
     const el = document.getElementById('toast');
-    if (!el) { console.log('toast:', msg); return; }
+    if (!el) { return; }
     el.textContent = msg;
     el.style.borderColor = type === 'error' ? '#d9534f' : (type === 'success' ? '#28a745' : '#2a3160');
     el.classList.add('show');
@@ -267,7 +267,7 @@
       e.stopPropagation();
       logout.textContent = '...';
       logout.style.pointerEvents = 'none';
-      try { await sb.auth.signOut({ scope: 'local' }); } catch (err) { console.warn('signOut:', err); }
+      try { await sb.auth.signOut({ scope: 'local' }); } catch (err) { /* Sign out error - continue */ }
       // Clear ALL possible session storage keys
       STORAGE_KEYS.forEach(function(k) {
         try { localStorage.removeItem(k); } catch (_) {}

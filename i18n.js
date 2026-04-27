@@ -698,7 +698,7 @@ export const i18n = {
     try { localStorage.setItem(LANG_KEY, lang); } catch {}
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    for (const fn of _listeners) try { fn(lang); } catch (e) { console.error(e); }
+    for (const fn of _listeners) try { fn(lang); } catch (e) { /* Listener error - continue */ }
   },
   toggle() { this.set(_lang === 'ar' ? 'en' : 'ar'); },
   subscribe(fn) { _listeners.add(fn); return () => _listeners.delete(fn); },

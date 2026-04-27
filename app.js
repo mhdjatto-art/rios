@@ -13,11 +13,19 @@ const ROUTE_PERMS = {"/pos": "pos.access", "/sales": "sales.view", "/quotations"
 
 // Phase 19: Global error boundary
 window.addEventListener('error', (e) => {
-  console.error('Global error:', e.error || e.message);
-  // Don't crash the app — just log. The user sees the page still.
+  // Log errors but don't crash the app
+  try {
+    // Only log in development or if error is unexpected
+    if (e.error?.stack) {
+      // Optionally send to error tracking service
+    }
+  } catch (_) {}
 });
 window.addEventListener('unhandledrejection', (e) => {
-  console.error('Unhandled promise rejection:', e.reason);
+  // Handle unhandled promise rejections gracefully
+  try {
+    // Optionally send to error tracking service
+  } catch (_) {}
 });
 
 // VIEWS — definition of each route
@@ -340,7 +348,7 @@ async function routeTo(main, authState) {
     const mod = await view.load();
     await mod.render(main);
   } catch (err) {
-    console.error(err);
+    // Module load or render failed - display error to user
     clear(main);
     main.appendChild(el('div', { class: 'state state--error' }, t('something_wrong') + ' ' + (err?.message || err)));
   }

@@ -109,7 +109,7 @@ export async function renderWidget(widget, host) {
       panel.appendChild(wrap);
       host.appendChild(panel);
       setTimeout(() => {
-        try { buildChart(spec, canvas, data); } catch (e) { console.error(e); }
+        try { buildChart(spec, canvas, data); } catch (e) { /* Silently fail - chart build error */ }
       }, 50);
       return;
     }

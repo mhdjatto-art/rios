@@ -70,7 +70,7 @@ export async function openCameraScanner(onDetected) {
       () => {}, // onError per-frame (ignore)
     );
   } catch (err) {
-    console.error(err);
+    // Handle camera access error gracefully
     status.textContent = t('camera_error') + ': ' + (err?.message || err);
     status.className = 'form-error';
   }

@@ -16,13 +16,8 @@ export async function render(host) {
     const { data, error } = await reorderApi.list();
     if (error) return renderError(card, error);
 
-    // Debug: log raw data
-    console.log('[reorder] raw data:', data);
-
     // Filter out COMPLETELY empty rows (where even sku is null)
     const rows = (data || []).filter((r) => r && (r.sku || r.name || r.product_id));
-
-    console.log('[reorder] filtered rows:', rows.length, 'from', data?.length);
 
     if (!rows.length) return renderEmpty(card, '🎉 ' + t('no_reorder'));
 

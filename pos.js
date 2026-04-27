@@ -640,8 +640,7 @@ export async function render(host) {
           p_invoice_discount: invDisc,
         });
         if (metaRes.error) {
-          // Non-fatal: log the error but don't block the completed sale
-          console.warn('[POS] update_sale_metadata warning:', metaRes.error.message);
+          // Non-fatal: metadata update failed but don't block the sale
         }
       }
 

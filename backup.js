@@ -69,8 +69,7 @@ export async function render(host) {
         status.textContent = t('backup_running') + ' — ' + table;
         const { data, error } = await exportApi.fetchAll(table);
         if (error) {
-          // Skip tables we can't read (e.g. RLS) but log them.
-          console.warn(`Skipping ${table}:`, error.message);
+          // Skip tables we can't read (e.g. RLS) - silently continue
           continue;
         }
         zip.file(`${table}.csv`, toCSV(data || []));
@@ -93,7 +92,7 @@ export async function render(host) {
       status.textContent = t('backup_done');
       toast(t('backup_done'), 'success');
     } catch (err) {
-      console.error(err);
+      // Handle backup errors without crashing
       status.textContent = t('something_wrong');
       toast(errMsg({ message: err.message }), 'error');
     } finally {

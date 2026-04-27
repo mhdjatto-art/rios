@@ -3,7 +3,7 @@ import { authApi } from './api.js';
 
 const state = { session: null, profile: null, ready: false, _listeners: new Set() };
 
-function emit() { for (const fn of state._listeners) try { fn(getSnapshot()); } catch (e) { console.error(e); } }
+function emit() { for (const fn of state._listeners) try { fn(getSnapshot()); } catch (e) { /* Listener error - continue */ } }
 function getSnapshot() {
   return {
     session: state.session, profile: state.profile, user: state.session?.user || null, ready: state.ready,
@@ -33,10 +33,16 @@ function refreshPerms() {
 
 async function loadProfile() {
   if (!state.session) { state.profile = null; refreshPerms(); return; }
-  const { data, error } = await authApi.getProfile(state.session.user.id);
-  if (error) { console.error('profile:', error); state.profile = null; refreshPerms(); return; }
-  state.profile = data;
-  refreshPerms();
+  try {
+    const { data, error } = await authApi.getProfile(state.session.user.id);
+    if (error) { state.profile = null; refreshPerms(); return; }
+    state.profile = data;
+    refreshPerms();
+  } catch (err) {
+    // Silently handle profile load errors - user may not have profile yet
+    state.profile = null;
+    refreshPerms();
+  }
 }
 
 export const auth = {
@@ -61,7 +67,11 @@ export const auth = {
     return { error: null };
   },
   async signOut() {
-    await authApi.signOut();
+    try {
+      await authApi.signOut();
+    } catch (err) {
+      // Sign out error - continue with clearing local state
+    }
     // Clear all Supabase/RIOS session keys
     Object.keys(localStorage).forEach((k) => {
       if (k.startsWith('sb-') || k.startsWith('supabase') || k.startsWith('rios')) {

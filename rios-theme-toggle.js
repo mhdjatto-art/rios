@@ -37,7 +37,7 @@
     try {
       localStorage.setItem(KEY, safeTheme);
     } catch (e) {
-      console.error('Failed to save theme locally:', e);
+      // Silently fail - local storage might be unavailable
     }
   }
 
@@ -73,13 +73,13 @@
         .single();
 
       if (error) {
-        console.warn('Could not load profile theme:', error.message);
+        // Silently fail - could not load user theme
         return null;
       }
 
       return normalizeTheme(data?.theme);
     } catch (e) {
-      console.error('Failed to load profile theme:', e);
+      // Silently fail - could not load profile theme
       return null;
     }
   }
@@ -95,10 +95,10 @@
         .eq('id', userId);
 
       if (error) {
-        console.warn('Could not save profile theme:', error.message);
+        // Silently fail - could not save profile theme
       }
     } catch (e) {
-      console.error('Failed to save profile theme:', e);
+      // Silently fail - could not save profile theme
     }
   }
 
