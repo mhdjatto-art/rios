@@ -68,7 +68,11 @@ async function loadProfile() {
 }
 
 export const auth = {
-  subscribe(fn) { state._listeners.add(fn); fn(getSnapshot()); return () => state._listeners.delete(fn); },
+  subscribe(fn) {
+    state._listeners.add(fn);
+    fn(getSnapshot());
+    return () => state._listeners.delete(fn);
+  },
   get state() { return getSnapshot(); },
 
   async init() {
@@ -106,13 +110,24 @@ export const auth = {
         message: err?.message,
       });
     }
-    // Clear all Supabase/RIOS session keys
+
+    // Clear all Supabase/RIOS session keys.
+    // Collect any failures and log them once instead of spamming the logger.
+    const failedKeys = [];
     Object.keys(localStorage).forEach((k) => {
       if (k.startsWith('sb-') || k.startsWith('supabase') || k.startsWith('rios')) {
         try { localStorage.removeItem(k); }
-        catch (e) { logWarning('Failed to remove localStorage key', { source: 'auth.signOut.clear', key: k, message: e?.message }); }
+        catch (e) { failedKeys.push({ key: k, message: e?.message }); }
       }
     });
+    if (failedKeys.length > 0) {
+      logWarning('signOut: failed to clear some localStorage keys', {
+        source: 'auth.signOut.clear',
+        count: failedKeys.length,
+        keys: failedKeys,
+      });
+    }
+
     state.session = null;
     state.profile = null;
     emit();
