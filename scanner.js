@@ -42,10 +42,16 @@ export async function openCameraScanner(onDetected) {
   stopBtn.addEventListener('click', () => close());
   dlg.addEventListener('close', () => {
     try {
-      scanner?.stop?.().catch((e) => logWarning('Scanner stop failed', { source: 'scanner.dialog.close.stop', message: e?.message }));
+      scanner?.stop?.().catch((e) => logWarning('Scanner stop failed', {
+        source: 'scanner.dialog.close.stop',
+        message: e?.message,
+      }));
       scanner?.clear?.();
     } catch (e) {
-      logWarning('Scanner cleanup failed', { source: 'scanner.dialog.close.cleanup', message: e?.message });
+      logWarning('Scanner cleanup failed', {
+        source: 'scanner.dialog.close.cleanup',
+        message: e?.message,
+      });
     }
     dlg.remove();
   });
@@ -53,7 +59,12 @@ export async function openCameraScanner(onDetected) {
 
   async function close() {
     try { await scanner?.stop?.(); }
-    catch (e) { logWarning('Scanner stop failed on close', { source: 'scanner.close', message: e?.message }); }
+    catch (e) {
+      logWarning('Scanner stop failed on close', {
+        source: 'scanner.close',
+        message: e?.message,
+      });
+    }
     dlg.close();
   }
 
@@ -74,7 +85,7 @@ export async function openCameraScanner(onDetected) {
           toast('✓ ' + code.slice(0, 20), 'success');
         }
       },
-      () => {} // onError per-frame (ignore)
+      () => {} // onError per-frame (intentionally noisy; ignored)
     );
   } catch (err) {
     logError(err, { source: 'scanner.openCameraScanner' });
