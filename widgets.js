@@ -140,7 +140,11 @@ export async function renderWidget(widget, host) {
       return;
     }
   } catch (err) {
-    logError(err, { source: 'widgets.renderWidget', widgetType: widget?.type, widgetId: widget?.id });
+    logError(err, {
+      source: 'widgets.renderWidget',
+      widgetType: widget?.type,
+      widgetId: widget?.id,
+    });
     host.innerHTML = '';
     host.appendChild(el('div', { class: 'state state--error' }, err.message || String(err)));
   }
